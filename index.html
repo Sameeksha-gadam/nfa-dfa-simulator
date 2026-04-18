@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NFA to DFA Simulator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="global-header">
+  <div class="logo">
+    <span class="logo-dot"></span>
+    NFA-DFA Simulator
+  </div>
+</header>
+
+<div id="screen1" class="screen active">
+  <div class="page-wrap" style="max-width:860px">
+    <div class="hero">
+      <div class="hero-eyebrow">Theory of Computation</div>
+         <h1>NFA to <span>DFA Conversion</span></h1>
+          <p>This project shows how a Non-deterministic Finite Automaton (NFA) can be converted into an equivalent Deterministic Finite Automaton (DFA) using subset construction. It also allows testing input strings on the generated DFA.</p>
+    </div>
+
+    <div class="cards-label">Select NFA</div>
+    <div class="cards-grid">
+      <div class="nfa-card" onclick="selectNFA(0)" id="card0">
+        <div class="card-check">✓</div>
+        <div class="card-num">NFA 01</div>
+        <div class="card-icon">🔚</div>
+        <h3>Strings Ending with 01</h3>
+        <p>This automaton accepts binary strings whose last two symbols are 0 and 1.</p>
+      </div>
+      <div class="nfa-card" onclick="selectNFA(1)" id="card1">
+        <div class="card-check">✓</div>
+        <div class="card-num">NFA 02</div>
+        <div class="card-icon">🔍</div>
+        <h3>Strings Containing 101</h3>
+        <p>This automaton accepts binary strings that contain 101 as a substring.</p>
+      </div>
+      <div class="nfa-card" onclick="selectNFA(2)" id="card2">
+        <div class="card-check">✓</div>
+        <div class="card-num">NFA 03</div>
+        <div class="card-icon">⚖️</div>
+        <h3>Even Number of 0s</h3>
+        <p>This automaton accepts strings that contain an even number of 0s.</p>
+      </div>
+    </div>
+
+    <div class="progress-dots">
+      <div class="pdot active"></div>
+      <div class="pdot"></div>
+    </div>
+    <br>
+    <div class="btn-center">
+      <button class="btn btn-primary" onclick="startConversion()" id="startBtn" disabled>
+         Select NFA
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="screen2" class="screen">
+  <div class="page-wrap">
+
+    <div class="controls-bar" style="margin-top:28px">
+      <button class="btn btn-secondary btn-sm" onclick="goBack()">← Back</button>
+      <div style="margin-left:auto">
+        <span style="font-size:0.8rem;color:var(--text-muted)">Selected: </span>
+        <strong id="selectedLabel" style="font-size:0.85rem;color:var(--primary)"></strong>
+      </div>
+    </div>
+
+    <div class="page2-hero">
+      <div class="eyebrow">Step-by-step Analysis</div>
+      <h2 id="nfaTitle">NFA Details</h2>
+      <p id="nfaDesc"></p>
+    </div>
+
+    <div class="card">
+      <div class="section-title"> NFA Details</div>
+      <div class="section-sub">Basic details of the selected NFA</div>
+      <div class="info-grid" id="nfaInfoGrid"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">NFA Transition Table</div>
+      <div class="section-sub">δ : Q × Σ → P(Q) — each cell shows the set of reachable states</div>
+      <div class="table-wrap" id="nfaTableWrap"></div>
+    </div>
+
+    <div class="card convert-section">
+      <div class="section-title" style="justify-content:center"><span class="icon">⚙️</span> NFA to DFA Conversion</div>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin:10px 0 20px">
+         In subset construction, each DFA state is formed using a set of NFA states. The following conversion shows the equivalent DFA generated from the selected NFA.
+        </p>
+      <button class="btn btn-accent" onclick="runConversion()" id="convertBtn">
+         Convert to DFA
+      </button>
+    </div>
+
+    <div class="card hidden" id="stepsCard">
+      <div class="section-title">Step-by-Step Conversion</div>
+      <div class="section-sub">The following steps show how the DFA states are formed from the NFA.</div>
+      <div class="steps-wrap" id="stepsWrap"></div>
+    </div>
+
+    <div class="card hidden" id="dfaCard">
+      <div class="section-title"> Generated DFA</div>
+      <div class="section-sub">Equivalent DFA obtained after applying subset construction</div>
+      <div class="dfa-stats" id="dfaStats"></div>
+      <div class="table-wrap" id="dfaTableWrap"></div>
+    </div>
+
+    <div class="card hidden" id="simCard">
+      <div class="section-title"><span class="icon">▶️</span> Test Input String</div>
+      <div class="section-sub">Enter a binary string and check whether it is accepted by generated DFA.</div>
+
+      <div class="sim-input-row">
+        <div class="sim-input-wrap">
+          <label>Enter Input String </label>
+          <input type="text" id="simInput" placeholder="e.g. 10101" />
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-primary" onclick="runSimulation()">▶ Test String</button>
+        </div>
+      </div>
+
+      <div>
+        <span style="font-size:0.78rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.07em">Sample inputs:</span>
+        <div class="sample-btns" id="sampleBtns"></div>
+      </div>
+
+      <div id="simError" class="error-msg hidden"></div>
+      <div id="simSteps" class="hidden" style="margin-top:20px">
+        <div style="font-size:0.78rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Simulation Steps</div>
+        <div class="steps-wrap" id="simStepsWrap"></div>
+        <div id="simResult"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
