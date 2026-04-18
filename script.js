@@ -56,6 +56,11 @@ let chosenNFA = -1;
 let currentDFA = null;
 
 function selectNFA(index) {
+document.getElementById("simInput").value = "";
+document.getElementById("simError").classList.add("hidden");
+document.getElementById("simSteps").classList.add("hidden");
+document.getElementById("simStepsWrap").innerHTML = "";
+document.getElementById("simResult").innerHTML = "";
   chosenNFA = index;
 
   const cards = document.querySelectorAll(".nfa-card");
@@ -71,6 +76,11 @@ function selectNFA(index) {
 }
 
 function startConversion() {
+document.getElementById("simInput").value = "";
+document.getElementById("simError").classList.add("hidden");
+document.getElementById("simSteps").classList.add("hidden");
+document.getElementById("simStepsWrap").innerHTML = "";
+document.getElementById("simResult").innerHTML = "";
   if (chosenNFA < 0) return;
 
   const selected = nfaList[chosenNFA];
